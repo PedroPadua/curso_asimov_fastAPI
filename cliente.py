@@ -50,9 +50,28 @@ def add_livro():
         'editora': editora,
         'ano': ano
     }
-
     resp = requests.post(f'{api_url}/livros/', json = payload)
     print('Livro adicionado!')
+
+def edite_livro():
+    livro_id = input('UUID do livro:').strip()
+    print('\nDigite os dados do livro a ser editado:')
+    autor = input('Autor:')
+    titulo = input('Título:')
+    editora = input('Editora:')
+    ano = input('Ano:')
+
+    payload = {
+        'uuid': livro_id,
+        'autor' : autor,
+        'titulo': titulo, 
+        'editora': editora,
+        'ano': ano        
+    }
+
+    resp = requests.put(f'{api_url}/livros/{livro_id}', json = payload)
+    print('\nLivro atualizado!')
+
 
 def menu():
 
@@ -61,6 +80,7 @@ def menu():
         print('\n1 -Listar Livros')
         print('2 -Buscar livro por UUID')
         print('3 -Adicionar novo livro')
+        print('4 -Editar livro existente')
         print('0 -Sair')
 
         opc = input('Escolha a opção desejada:').strip()
@@ -74,6 +94,9 @@ def menu():
 
         elif opc == '3':
             add_livro()
+        
+        elif opc == '4':
+            edite_livro()
 
         elif opc == '0':
             print('Encerrando programa...')
