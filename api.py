@@ -37,6 +37,19 @@ class LivroPutPost(BaseModel):
     editora : str
     ano : int
 
+
+class LivroPatch(BaseModel):
+
+    autor : Optional[str] = None
+    titulo: Optional[str] = None
+    editora : Optional[str] = None
+    ano : Optional[int] = None
+
+
+class ConfirmaDelete(BaseModel):
+    msg = str
+    uuid : UUID
+
 @app.get('/')
 async def root():
     return {'message': 'Biblioteca de Livros'} 
@@ -94,5 +107,24 @@ async def atualizar_livro(livro_id: UUID, livro_update: LivroPutPost) -> Livro:
     raise HTTPException(status_code = 404, detail = 'Livro não encontrado.')
 
 
+@app.patch('/Livros/{livro_id}', responde_model = Livro, 
+           response = {404 : {'description': 'Livro não encontrado!'}})
+async def atualizar_parcial(livro_id:UUID, livro_update: LivroPatch) -> Livro:
+        for index, livro in livros_db.items():
+            if livro['uuid'] == livro_id:
+                for key, value in livro_update.model_dump(exclude_defaults= True).items():
+                    livro[key] = value
+            return Livro(**livros_db[index])
 
+        raise HTTPException(status_code = 404, detail = 'Livro não encontrado.')
 
+@app.delete('/Livros/{livro_id}', responde_model = Livro, response = {404 : {'description': 'Livro não encontrado!'}})
+async def delete_livro(livro_id:UUID) -> ConfirmaDelete:
+
+        for index, livro in livros_db.items():
+            if livro['uuid'] == livro_id:
+                del livros_db[index]
+
+                return ConfirmaDelete(msg = f'Livro {livro_id} deletado.',uuid = livro_id) 
+
+            raise HTTPException(status_code = 404, detail = 'Livro não encontrado.')

@@ -72,6 +72,32 @@ def edite_livro():
     resp = requests.put(f'{api_url}/livros/{livro_id}', json = payload)
     print('\nLivro atualizado!')
 
+def edite_parcial():
+    livro_id = input('UUID do livro:').strip()
+    print('\nDigite os dados do livro a ser editado parciamente (Digite apenas o que quer editar, em branco para ignorar):')
+    autor = input('Autor:')
+    titulo = input('Título:')
+    editora = input('Editora:')
+    ano = input('Ano:')
+
+    payload = {}
+    if autor:
+        payload['autor'] = autor
+    if titulo:
+        payload['titulo'] = titulo
+    if editora:
+        payload['editora'] = editora
+    if ano:
+        payload['ano'] = int(ano)
+
+    resp = requests.patch(f'{api_url}/livros/{livro_id}', json = payload)
+    print('\nLivro atualizado parcialmente!')   
+
+def delete_livro():
+        print('\nDigite o livro a ser deletado:')
+        livro_id = input('UUID do livro:').strip()
+        resp = requests.delete(f'{api_url}/livros/{livro_id}')
+        print('\nResultado da exclusão:')
 
 def menu():
 
@@ -81,6 +107,8 @@ def menu():
         print('2 -Buscar livro por UUID')
         print('3 -Adicionar novo livro')
         print('4 -Editar livro existente')
+        print('5 -Editar livro parcialmente existente')
+        print('6 -Deletar livro')
         print('0 -Sair')
 
         opc = input('Escolha a opção desejada:').strip()
@@ -97,6 +125,12 @@ def menu():
         
         elif opc == '4':
             edite_livro()
+        
+        elif opc == '5':
+            edite_parcial()
+            
+        elif opc == '6':
+            delete_livro()
 
         elif opc == '0':
             print('Encerrando programa...')
